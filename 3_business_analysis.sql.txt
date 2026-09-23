@@ -1,0 +1,172 @@
+USE pharma_medicine_analysis;
+
+-- 1. Number of medicines by manufacturer
+SELECT
+    manufacturer,
+    COUNT(DISTINCT medicine_name) AS medicine_count
+FROM medicine_details_clean
+GROUP BY manufacturer
+ORDER BY medicine_count DESC;
+
+
+-- 2. Top 10 manufacturers by medicine count
+SELECT
+    manufacturer,
+    COUNT(DISTINCT medicine_name) AS medicine_count
+FROM medicine_details_clean
+GROUP BY manufacturer
+ORDER BY medicine_count DESC
+LIMIT 10;
+
+
+-- 3. Manufacturer portfolio and average review performance
+SELECT
+    manufacturer,
+    COUNT(DISTINCT medicine_name) AS medicine_count,
+    ROUND(AVG(excellent_review_percent), 2) AS avg_excellent_review,
+    ROUND(AVG(average_review_percent), 2) AS avg_average_review,
+    ROUND(AVG(poor_review_percent), 2) AS avg_poor_review
+FROM medicine_details_clean
+GROUP BY manufacturer
+ORDER BY medicine_count DESC;
+
+
+-- 4. Top 10 medicines by Excellent review %
+SELECT
+    medicine_name,
+    manufacturer,
+    excellent_review_percent
+FROM medicine_details_clean
+ORDER BY excellent_review_percent DESC
+LIMIT 10;
+
+
+-- 5. Top 10 medicines by Poor review %
+SELECT
+    medicine_name,
+    manufacturer,
+    poor_review_percent
+FROM medicine_details_clean
+ORDER BY poor_review_percent DESC
+LIMIT 10;
+
+
+-- 6. Top 10 medicines by Average review %
+SELECT
+    medicine_name,
+    manufacturer,
+    average_review_percent
+FROM medicine_details_clean
+ORDER BY average_review_percent DESC
+LIMIT 10;
+
+
+-- 7. Manufacturers with highest average Excellent review
+SELECT
+    manufacturer,
+    ROUND(AVG(excellent_review_percent), 2) AS avg_excellent_review
+FROM medicine_details_clean
+GROUP BY manufacturer
+ORDER BY avg_excellent_review DESC
+LIMIT 10;
+
+
+-- 8. Manufacturers with most medicines having Excellent review >= 70%
+SELECT
+    manufacturer,
+    COUNT(DISTINCT medicine_name) AS medicine_count
+FROM medicine_details_clean
+WHERE excellent_review_percent >= 70
+GROUP BY manufacturer
+ORDER BY medicine_count DESC
+LIMIT 10;
+
+
+-- 9. Count of medicines with Excellent review >= 80%
+SELECT
+    COUNT(DISTINCT medicine_name) AS medicines_excellent_80_plus
+FROM medicine_details_clean
+WHERE excellent_review_percent >= 80;
+
+
+-- 10. Count of medicines with Poor review >= 50%
+SELECT
+    COUNT(DISTINCT medicine_name) AS medicines_poor_50_plus
+FROM medicine_details_clean
+WHERE poor_review_percent >= 50;
+
+
+-- 11. Manufacturers with most medicines having Poor review >= 50%
+SELECT
+    manufacturer,
+    COUNT(DISTINCT medicine_name) AS medicine_count
+FROM medicine_details_clean
+WHERE poor_review_percent >= 50
+GROUP BY manufacturer
+ORDER BY medicine_count DESC
+LIMIT 10;
+
+
+-- 12. Medicines with mixed feedback
+SELECT
+    medicine_name,
+    manufacturer,
+    excellent_review_percent,
+    poor_review_percent
+FROM medicine_details_clean
+WHERE excellent_review_percent >= 50
+  AND poor_review_percent >= 30
+ORDER BY excellent_review_percent DESC;
+
+
+-- 13. Overall average review distribution
+SELECT
+    ROUND(AVG(excellent_review_percent), 2) AS avg_excellent_review,
+    ROUND(AVG(average_review_percent), 2) AS avg_average_review,
+    ROUND(AVG(poor_review_percent), 2) AS avg_poor_review
+FROM medicine_details_clean;
+
+
+-- 14. Manufacturers with highest average Poor review
+SELECT
+    manufacturer,
+    ROUND(AVG(poor_review_percent), 2) AS avg_poor_review
+FROM medicine_details_clean
+GROUP BY manufacturer
+ORDER BY avg_poor_review DESC
+LIMIT 10;
+
+
+-- 15. Side-effect information by medicine
+SELECT
+    medicine_name,
+    manufacturer,
+    side_effects
+FROM medicine_details_clean
+WHERE side_effects IS NOT NULL
+  AND TRIM(side_effects) <> ''
+ORDER BY medicine_name;
+
+
+-- 16. Most frequently listed Uses
+SELECT
+    uses,
+    COUNT(DISTINCT medicine_name) AS medicine_count
+FROM medicine_details_clean
+WHERE uses IS NOT NULL
+  AND TRIM(uses) <> ''
+GROUP BY uses
+ORDER BY medicine_count DESC
+LIMIT 10;
+
+
+-- 17. Most frequently listed Compositions
+SELECT
+    composition,
+    COUNT(DISTINCT medicine_name) AS medicine_count
+FROM medicine_details_clean
+WHERE composition IS NOT NULL
+  AND TRIM(composition) <> ''
+GROUP BY composition
+ORDER BY medicine_count DESC
+LIMIT 10;
